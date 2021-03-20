@@ -1,0 +1,6 @@
+cmudict*
+make_baseform.pl
+__pycache__
+venv
+config.prod.ini
+config.ini

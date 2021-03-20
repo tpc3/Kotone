@@ -151,43 +151,40 @@ class MyClient(discord.Client):
             req = message.content.split()
             if len(req) == 1:
                 await message.channel.send(embed=msg_conf(message.guild.id, lang))
-            elif len(req) == 3:
+            elif len(req) == 3 and req[1] in ["prefix", "lang", "limit", "voice", "bots", "default"]:
                 key = str(message.guild.id) + "_" + req[1]
-                if req[1] in ["prefix", "lang", "limit", "voice", "bots", "default"]:
-                    # Check config
-                    if req[1] == "lang" and not voice_obj.check(db_config(message.guild.id, "voice"), req[2],
-                                                                message.guild.id):
-                        await message.channel.send(embed=msg(lang, strings.Configs.Lang.config_error, color=discord.Colour.red()))
-                    elif req[1] == "voice":
-                        try:
-                            result = voice_obj.check(req[2], db_config(message.guild.id, "lang"),message.guild.id)
-                        # gTTS error
-                        except (ValueError, AttributeError):
-                            await message.channel.send(
-                                embed=msg(lang, strings.Configs.Lang.error_voice, color=discord.Colour.red()))
-                            return
-                        if result:
-                            redis_config.set(key, req[2])
-                            await message.add_reaction("👍")
-                        else:
-                            await message.channel.send(embed=msg(lang, strings.Configs.Lang.config_error, color=discord.Colour.red()))
-                    elif req[1] == "bots" and req[2] not in ["true", "false"]:
-                        await message.channel.send(embed=msg(lang, strings.Configs.Lang.config_error, color=discord.Colour.red()))
-                    elif req[1] == "default" and req[2] not in ["allow", "deny"]:
-                        await message.channel.send(embed=msg(lang, strings.Configs.Lang.config_error, color=discord.Colour.red()))
-                    elif req[1] == "limit":
-                        try:
-                            i = int(req[2])
-                            if i < 0 or i > 2000:
-                                raise ValueError
-                            else:
-                                redis_config.set(key, req[2])
-                                await message.channel.send(embed=msg(lang, "config"))
-                        except:
-                            await message.channel.send(embed=msg(lang, strings.Configs.Lang.config_error, color=discord.Colour.red()))
-                    else:
+                # Check config
+                if req[1] == "lang" and not voice_obj.check(db_config(message.guild.id, "voice"), req[2],message.guild.id):
+                    await message.channel.send(embed=msg(lang, strings.Configs.Lang.config_error, color=discord.Colour.red()))
+                elif req[1] == "voice":
+                    try:
+                        result = voice_obj.check(req[2], db_config(message.guild.id, "lang"),message.guild.id)
+                    # gTTS error
+                    except (ValueError, AttributeError):
+                        await message.channel.send(embed=msg(lang, strings.Configs.Lang.error_voice, color=discord.Colour.red()))
+                        return
+                    if result:
                         redis_config.set(key, req[2])
                         await message.add_reaction("👍")
+                    else:
+                        await message.channel.send(embed=msg(lang, strings.Configs.Lang.config_error, color=discord.Colour.red()))
+                elif req[1] == "bots" and req[2] not in ["true", "false"]:
+                    await message.channel.send(embed=msg(lang, strings.Configs.Lang.config_error, color=discord.Colour.red()))
+                elif req[1] == "default" and req[2] not in ["allow", "deny"]:
+                    await message.channel.send(embed=msg(lang, strings.Configs.Lang.config_error, color=discord.Colour.red()))
+                elif req[1] == "limit":
+                    try:
+                        i = int(req[2])
+                        if i < 0 or i > 2000:
+                            raise ValueError
+                        else:
+                            redis_config.set(key, req[2])
+                            await message.channel.send(embed=msg(lang, "config"))
+                    except:
+                        await message.channel.send(embed=msg(lang, strings.Configs.Lang.config_error, color=discord.Colour.red()))
+                else:
+                    redis_config.set(key, req[2])
+                    await message.add_reaction("👍")
 
             elif req[1] == "replace":
                 if len(req) == 4:
@@ -198,7 +195,7 @@ class MyClient(discord.Client):
                         redis_config.hset(key, req[2], req[3])
                     await message.add_reaction("👍")
                 elif len(req) == 2:
-                    await message.channel.send(embed=msg_dict(req[1], lang, message.guild.id, 0))
+                    await message.channel.send(embed=msg_dict(req[1], lang, message.guild.id, 1))
                 elif len(req) == 3:
                     try:
                         page = int(req[2])
@@ -217,7 +214,7 @@ class MyClient(discord.Client):
                         redis_config.hset(key, message.mentions[0].id, message.mentions[0].name)
                         await message.add_reaction("👍")
                 elif len(req) == 2:
-                    await message.channel.send(embed=msg_dict(req[1], lang, message.guild.id, 0))
+                    await message.channel.send(embed=msg_dict(req[1], lang, message.guild.id, 1))
                 elif len(req) == 3:
                     try:
                         page = int(req[2])
