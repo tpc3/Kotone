@@ -30,8 +30,8 @@ num_table = str.maketrans({
     "ォ": "お",
     "ゔ": "ぶ",
     "ヴ": "ぶ",
-    "っ": ",,",
-    "ッ": ",,",
+    "っ": ",",
+    "ッ": ",",
     "づ": "ず",
     "ヅ": "ズ"
 })
@@ -96,6 +96,7 @@ alpha_table = str.maketrans({
 
 readable_hira = [chr(i) for i in range(12353, 12436)]
 readable = "。？、,:/+'ー"
+readable_end = "。？、"
 readable_before = "きしちにひみりぎじつふびすとキシチニヒミリギジツフビスト"
 
 
@@ -107,7 +108,7 @@ class AllHiragana:
         self.mecab2 = MeCab.Tagger("-Owakati")
 
     def tokana(self, data):
-        result = jaconv.h2z(self.mecab.parse(data).translate(num_table))
+        result = jaconv.h2z(self.mecab.parse(data)).translate(num_table)
         for i in self.mecab2.parse(data).split():
             if i.isascii():
                 converted = self.etk.convert(english=i)
@@ -116,13 +117,16 @@ class AllHiragana:
                 else:
                     result = result.replace(i, converted)
         result = jaconv.kata2hira(result).replace("ERROR 辞書にありません", "")
+
+        tmp = list(result)
         for j, i in enumerate(result):
-            if i not in readable_hira and i not in readable:
-                result = result.replace(i, ",")
             if i in small_table and (result[j-1] not in readable_before or result[j-1] in readable):
-                tmp = list(result)
                 tmp[j] = small_table[i]
-                result = "".join(tmp)
+            if (i not in readable_hira and i not in readable) or (result[j-1] in readable and i in readable):
+                tmp[j] = ""
+        if result[-2] in readable and result[-2] not in readable_end:
+            del tmp[-2]
+        result = "".join(tmp)
 
         return result[:-1]
 
