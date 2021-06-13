@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rm -f config.prod.ini config.ini
+rm -rf config.prod.ini config.ini venv __pycache__
 
 curl "https://archlinux.org/mirrorlist/?country=JP&protocol=http&ip_version=4" -o /etc/pacman.d/mirrorlist
 sed -i '/^#S/s/^#//' /etc/pacman.d/mirrorlist

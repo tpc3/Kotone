@@ -95,8 +95,8 @@ alpha_table = str.maketrans({
 })
 
 readable_hira = [chr(i) for i in range(12353, 12436)]
-readable = "。？、,:/+'ー"
-readable_end = "。？、"
+readable = "。？、,/+'ー"
+readable_end = "。？、ー"
 readable_before = "きしちにひみりぎじつふびすとキシチニヒミリギジツフビスト"
 
 

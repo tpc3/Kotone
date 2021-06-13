@@ -2,6 +2,7 @@ import asyncio
 import configparser
 import re
 import traceback
+import threading
 
 import discord
 import redis
@@ -13,6 +14,9 @@ import strings
 on_vc = {}
 # Queues per guild
 queue = {}
+# Lock
+lock = {}
+
 # Config
 config = configparser.ConfigParser()
 config.read(strings.config_ini)
@@ -93,7 +97,10 @@ class MyClient(discord.Client):
     async def on_voice_state_update(self, member, before, after):
         global on_vc
         if member.guild.voice_client is not None:
-            if len(member.guild.voice_client.channel.members) == 1:
+            if (member == client.user) and before.channel and after.channel and (before.channel != after.channel):
+                await member.guild.voice_client.move_to(None)
+            elif len(member.guild.voice_client.channel.members) == 1:
+                print("disconnect trap")
                 await member.guild.voice_client.disconnect()
                 del on_vc[member.guild.id]
             elif len(member.guild.voice_client.channel.members) != 0:
@@ -109,14 +116,19 @@ class MyClient(discord.Client):
     async def on_message(self, message):
         global on_vc
         global queue
-        if message.author == client.user or message.guild is None:
+        if message.author == client.user or message.guild is None or message.content == "":
             return
         prefix = db_config(message.guild.id, "prefix")
-        if message.channel.id not in on_vc.values() and not message.content.startswith(prefix):
-            return
+        if message.channel.id not in on_vc.values():
+            if not message.content.startswith(prefix):
+                return
+        elif message.guild.voice_client is None:
+            # ?????
+            del on_vc[message.guild.id]
+            queue[message.guild.id] = [[]]
         lang = db_config(message.guild.id, "lang")
         if message.content == prefix + "join":
-            if (not message.author.voice) or (not message.author.voice.channel):
+            if (not message.author.voice) or (not message.author.voice.channel) or (message.guild.voice_client):
                 return
             await message.author.voice.channel.connect()
             await message.guild.change_voice_state(channel=message.author.voice.channel, self_deaf=True, self_mute=True)
@@ -255,7 +267,10 @@ class MyClient(discord.Client):
                 queue[message.guild.id] = [[content, message.author.id]]
             else:
                 queue[message.guild.id].append([content, message.author.id])
-            if not message.guild.voice_client.is_playing():
+            if message.guild.id not in lock:
+                lock[message.guild.id] = threading.Lock()
+            if not lock[message.guild.id].locked():
+                lock[message.guild.id].acquire()
                 while queue[message.guild.id]:
                     await message.guild.change_voice_state(channel=message.guild.voice_client.channel, self_mute=False,
                                                            self_deaf=True)
@@ -276,6 +291,7 @@ class MyClient(discord.Client):
                             await asyncio.sleep(1)
                         await message.guild.change_voice_state(channel=message.guild.voice_client.channel,
                                                                self_mute=True, self_deaf=True)
+                lock[message.guild.id].release()
 
 
 intents = discord.Intents.default()
