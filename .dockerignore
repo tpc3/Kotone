@@ -1,0 +1,8 @@
+.vscode
+README.md
+config.ini
+config.prod.ini
+.git
+.gitignore
+Dockerfile
+.dockerignore
