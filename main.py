@@ -99,8 +99,8 @@ class MyClient(discord.Client):
         if member.guild.voice_client is not None:
             if (member == client.user) and before.channel and after.channel and (before.channel != after.channel):
                 await member.guild.voice_client.move_to(None)
+                del on_vc[member.guild.id]
             elif len(member.guild.voice_client.channel.members) == 1:
-                print("disconnect trap")
                 await member.guild.voice_client.disconnect()
                 del on_vc[member.guild.id]
             elif len(member.guild.voice_client.channel.members) != 0:

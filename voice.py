@@ -42,9 +42,12 @@ class Voice:
             fail = False
             audio_type = "mp3"
             if voice == voice_aques:
-                fp.write(await self.send_request(self.config["system"]["aques_api"] + str(kana.uid_voice[int(vtype)]),
-                                           kanaconv.tokana(message)))
-                audio_type = "wav"
+                message_kana = kanaconv.tokana(message)
+                if message_kana == "":
+                    audio_type = "s16be"
+                else:
+                    fp.write(await self.send_request(self.config["system"]["aques_api"] + str(kana.uid_voice[int(vtype)]), message_kana))
+                    audio_type = "wav"
             elif voice == voice_gtts or fail is True:
                 audio_type = "mp3"
                 try:
