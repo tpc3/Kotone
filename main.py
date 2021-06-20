@@ -279,10 +279,7 @@ class MyClient(discord.Client):
                             message.guild.voice_client.play(
                                 await voice_obj.get(queue[message.guild.id][0][0], lang, db_config(message.guild.id, "voice"),
                                               queue[message.guild.id][0][1]))
-                    except AssertionError:
-                        pass
-                    # gTTS token seed error, whoops
-                    except ValueError:
+                    except:
                         traceback.print_exc(chain=True)
                         await message.channel.send(embed=msg(lang, strings.Configs.Lang.error_voice, color=discord.Colour.red()))
                     finally:
