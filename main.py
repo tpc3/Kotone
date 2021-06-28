@@ -256,7 +256,10 @@ class MyClient(discord.Client):
             content = discord.utils.escape_mentions(message.clean_content)
             limit = int(db_config(message.guild.id, "limit"))
             for k, v in redis_config.hgetall(str(message.guild.id) + "_" + "replace").items():
-                content = re.sub(k, v, content)
+                try:
+                    content = re.sub(k, v, content)
+                except:
+                    pass
             if emoji.search(content) is not None:
                 content = re.sub(emoji, "", content)
                 await message.channel.send(embed=msg(lang, strings.Configs.Lang.warn_emoji, color=discord.Colour.red()))
