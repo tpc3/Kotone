@@ -133,6 +133,9 @@ class MyClient(discord.Client):
             await message.author.voice.channel.connect()
             await message.guild.change_voice_state(channel=message.author.voice.channel, self_deaf=True, self_mute=True)
             on_vc[message.guild.id] = message.channel.id
+            # become speaker if Stage & bot has permission & commander has permission
+            if (isinstance(message.author.voice.channel, discord.StageChannel) and message.author.voice.channel.permissions_for(message.guild.me).mute_members and message.author.voice.channel.permissions_for(message.author).mute_members):
+                await message.guild.me.edit(suppress=False)
             await message.add_reaction("✋")
             return
 
