@@ -55,6 +55,9 @@ class Voice:
                 except gtts.gTTSError:
                     # Maybe 404. Just ignore
                     pass
+                except AssertionError:
+                    # Maybe No text to send to TTS API. Just ignore
+                    pass
             elif voice.startswith(voice_watson):
                 audio_type = "ogg"
                 fp.write(self.watson.synthesize(message, voice=voice.replace(voice_watson + "_", "")).get_result().content)

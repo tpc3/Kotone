@@ -37,7 +37,7 @@ voice_obj = voice.Voice(config, dev)
 
 # Force-ignore dict
 ignore = []
-for i in [r"https?://[\w/:%#\$&\?\(\)~\.=\+\-]+", r"\|\|.*?\|\|"]:
+for i in [r"https?://[\w/:%#\$&\?\(\)~\.=\+\-]+", r"\|\|[\s\S]*?\|\|"]:
     ignore.append(re.compile(i, flags=re.M))
 
 
