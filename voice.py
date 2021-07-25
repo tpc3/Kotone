@@ -37,7 +37,6 @@ class Voice:
         self.watson.set_service_url(self.config["system"]["watson_url"])
         self.aiosession = aiohttp.ClientSession()
         try:
-            os.environ['GRPC_DNS_RESOLVER'] = 'native' # I don't understand well but here is what I googled and found this
             self.gcp_client = texttospeech.TextToSpeechAsyncClient(
                 credentials=google.oauth2.service_account.Credentials.from_service_account_file(self.config["system"]["gcp_credentials_path"]) if self.config["system"]["gcp_credentials_path"] != "" else None
             )
