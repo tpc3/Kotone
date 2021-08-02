@@ -32,7 +32,7 @@ else:
     redis_config.config_set("save", "60 1")
     redis_config.config_set("appendonly", "yes")
     dev = False
-emoji = re.compile("<:.*?:.*?>", flags=re.M)
+emoji = re.compile("<a?:.*?:.*?>", flags=re.M)
 voice_obj = voice.Voice(config, dev)
 
 # Force-ignore dict
@@ -176,6 +176,10 @@ class MyClient(discord.Client):
                         result = voice_obj.check(req[2], db_config(message.guild.id, "lang"),message.guild.id)
                     # gTTS error
                     except (ValueError, AttributeError):
+                        await message.channel.send(embed=msg(lang, strings.Configs.Lang.error_voice, color=discord.Colour.red()))
+                        return
+                    except:
+                        traceback.print_exc(chain=True)
                         await message.channel.send(embed=msg(lang, strings.Configs.Lang.error_voice, color=discord.Colour.red()))
                         return
                     if result:
