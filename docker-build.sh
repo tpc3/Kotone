@@ -5,7 +5,7 @@ rm -rf config.prod.ini config.ini venv __pycache__
 curl "https://archlinux.org/mirrorlist/?country=JP&protocol=http&ip_version=4" -o /etc/pacman.d/mirrorlist
 sed -i '/^#S/s/^#//' /etc/pacman.d/mirrorlist
 pacman -Syu --noconfirm git python-pip ffmpeg
-curl "https://raw.githubusercontent.com/morikatron/snippet/master/english_to_kana/english_to_kana.py" -o
+curl "https://raw.githubusercontent.com/morikatron/snippet/master/english_to_kana/english_to_kana.py" -O
 ./cmudict.sh
 useradd -m pkgbuild
 echo "pkgbuild ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/pkgbuild
