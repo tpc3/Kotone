@@ -2,9 +2,13 @@
 
 Discord TTS bot mainly forcused on Japanese: finally opensourced. yay!
 
-# Japanese
+## EOL
 
-## インストールヒント
+Due to archive of the discord.py library and instable behavior of the bot: We'll stop support of the Kotone at end of the month(October 2021).
+
+## Japanese
+
+### インストールヒント
 
 - memcachedを入れて起動してください
 - redisを入れて起動してください
@@ -14,7 +18,7 @@ Discord TTS bot mainly forcused on Japanese: finally opensourced. yay!
 - config.iniを開いてtokenを設定してください
 - DiscordBotの設定で、Server Members Intentを有効化してください
 
-### GCPを使用する場合
+#### GCPを使用する場合
 - GCPのプロジェクトでText-to-Speech APIを有効化します
 - Wavenet音声(高品質で高価)を使用する場合、config.iniのgcp_voicetypeを、Wavenetに変更します
 
@@ -27,7 +31,7 @@ Google Cloud SDKを使用している、またはCompute Cloud上で実行する
 認証用jsonの入手方法の参考ページ  
 https://cloud.google.com/docs/authentication/production?hl=ja#manually
 
-### mecabインストール
+#### mecabインストール
 お使いのOSのパッケージマネージャでインストールすることが推奨されます  
 Debian系  
 `# apt install mecab libmecab-dev mecab-ipadic`
